@@ -1,6 +1,9 @@
+import PaqC08.*;
+
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.*;
 
 public class HotelLogin extends JFrame{
     private JTextField Usuario;
@@ -34,7 +37,11 @@ public class HotelLogin extends JFrame{
                 if(Usuario.getText().equals(usuario) && Contrasena.getText().equals(contrasena)){
                     textoContrasena.setText("");
                     dispose();
-                    Reservas reserva = new Reservas();
+                    try {
+                        Reservas reservar = new Reservas();
+                    } catch (IOException | ClassNotFoundException ex) {
+                        ex.printStackTrace();
+                    }
                 }
                 else{
                     textoContrasena.setText("⚠ Usuario o contraseña incorrectos.");
@@ -46,4 +53,5 @@ public class HotelLogin extends JFrame{
     public static void main(String[] args) {
         HotelLogin miHotel = new HotelLogin();
     }
+
 }

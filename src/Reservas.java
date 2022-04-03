@@ -1,7 +1,9 @@
+import PaqC08.*;
+
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.Objects;
+import java.io.*;
 
 public class Reservas extends JFrame {
 
@@ -26,10 +28,22 @@ public class Reservas extends JFrame {
     private JTextField Estandar;
     private JTextField Balcon;
     private JTextField Suite;
+    private JTextField FechaE;
+    private JTextField FechaS;
+    private JButton Anular;
+    private JTextArea MapaHotel;
+    private static Hotel h = new Hotel();
+    private Cliente c = new Cliente();
+    private FileOutputStream fos = new FileOutputStream("Hotel.dat");
+    private ObjectOutputStream salida = new ObjectOutputStream(fos);
+
 
     String[] TipoEstancia = {"","Sin desayuno", "Con desayuno", "Media Pensión", "Pensión Completa"};
 
-    public Reservas() {
+    public Reservas() throws IOException, ClassNotFoundException {
+        salida.writeObject(h);
+        FileInputStream fis = new FileInputStream("Hotel.dat");
+        ObjectInputStream entrada = new ObjectInputStream(fis);
         setContentPane(Reservar);
         setTitle("Reservas");
         setSize(900, 600);
@@ -43,6 +57,8 @@ public class Reservas extends JFrame {
         Estandar.setText("0");
         Balcon.setText("0");
         Suite.setText("0");
+        h = (Hotel) entrada.readObject();
+        MapaHotel.setText(h.mapHab());
 
         cancelarButton.addActionListener(new ActionListener() {
             @Override
@@ -61,6 +77,8 @@ public class Reservas extends JFrame {
                 email.setText("");
                 DNI.setText("");
                 TarjetaCredito.setText("");
+                FechaE.setText("");
+                FechaS.setText("");
                 precioTotal.setText("");
                 Estandar.setText("0");
                 Balcon.setText("0");
@@ -115,36 +133,6 @@ public class Reservas extends JFrame {
             }
         });
 
-        estándarCheckBox.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if(estándarCheckBox.isSelected()){
-                String s = "Has seleccionado estándar";
-                PaginaPulsar estandar = new PaginaPulsar(s);
-            }
-            }
-        });
-
-        balcónCheckBox.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if(balcónCheckBox.isSelected()){
-                    String s = "Has seleccionado balcón";
-                    PaginaPulsar balcon = new PaginaPulsar(s);
-                }
-            }
-        });
-
-        suiteCheckBox.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if(suiteCheckBox.isSelected()){
-                    String s = "Has seleccionado Suite";
-                    PaginaPulsar Suite = new PaginaPulsar(s);
-                }
-            }
-        });
-
         comboBox1.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -173,8 +161,78 @@ public class Reservas extends JFrame {
         confirmarButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                String s = "Reserva Confirmada";
+                int numEntero4 = Integer.parseInt(DNI.getText());
+                int numEntero5 = Integer.parseInt(Telefono.getText());
+                int numEntero6 = Integer.parseInt(TarjetaCredito.getText());
+                int numEntero7 = Integer.parseInt(FechaE.getText());
+                int numEntero8 = Integer.parseInt(FechaS.getText());
+                c.setNombre(Nombre.getText());
+                c.setApellido(Apellidos.getText());
+                c.setDNI(numEntero4);
+                c.setTelefono(numEntero5);
+                c.setNumTarjeta(numEntero6);
+                c.setFechaE(numEntero7);
+                c.setFechaS(numEntero8);
+                int numEntero1,numEntero2,numEntero3;
+                if(estándarCheckBox.isSelected()){
+                     numEntero1 = Integer.parseInt(Estandar.getText());
+                } else numEntero1 = 0;
+                if(balcónCheckBox.isSelected()) {
+                     numEntero2 = Integer.parseInt(Balcon.getText());
+                } else numEntero2 = 0;
+                if(suiteCheckBox.isSelected()) {
+                     numEntero3 = Integer.parseInt(Suite.getText());
+                } else numEntero3 = 0;
+                String s = "";
+                if(h.resHab(c,numEntero1,numEntero2,numEntero3)) {
+                    s = "Reserva Confirmada";
+                } else s = "No se ha podido realizar todas las reservas";
+                try {
+                    salida.writeObject(h);
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
+                MapaHotel.setText(h.mapHab());
                 PaginaPulsar Confirmar = new PaginaPulsar(s);
+            }
+        });
+        Anular.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int numEntero4 = Integer.parseInt(DNI.getText());
+                int numEntero5 = Integer.parseInt(Telefono.getText());
+                int numEntero6 = Integer.parseInt(TarjetaCredito.getText());
+                int numEntero7 = Integer.parseInt(FechaE.getText());
+                int numEntero8 = Integer.parseInt(FechaS.getText());
+                Cliente c2 = new Cliente(Nombre.getText(),Apellidos.getText(),numEntero4,numEntero5,numEntero6,numEntero7,numEntero8);
+                int numEntero1,numEntero2,numEntero3;
+                if(estándarCheckBox.isSelected()){
+                    numEntero1 = Integer.parseInt(Estandar.getText());
+                } else numEntero1 = 0;
+                if(balcónCheckBox.isSelected()) {
+                    numEntero2 = Integer.parseInt(Balcon.getText());
+                } else numEntero2 = 0;
+                if(suiteCheckBox.isSelected()) {
+                    numEntero3 = Integer.parseInt(Suite.getText());
+                } else numEntero3 = 0;
+                String s = "";
+                if(c.equals(c2)) {
+                    if (h.anularRes(c, numEntero1, numEntero2, numEntero3)) {
+                        s = "Reserva Anulada";
+                    } else s = "No se ha podido realizar todas las anulaciones";
+                    try {
+                        salida.writeObject(h);
+                    } catch (IOException ex) {
+                        ex.printStackTrace();
+                    }
+                    MapaHotel.setText(h.mapHab());
+                    PaginaPulsar Confirmar = new PaginaPulsar(s);
+                }
+                else {
+                    s = "Los datos del cliente no estan registrados en el hotel";
+                    PaginaPulsar Confirmar = new PaginaPulsar(s);
+                }
+
             }
         });
     }
