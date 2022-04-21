@@ -32,7 +32,7 @@ public class Reservas extends JFrame {
     private JTextField FechaS;
     private JButton Anular;
     private JTextArea MapaHotel;
-    private static Hotel h = new Hotel();
+    private Hotel h = new Hotel();
     private Cliente c = new Cliente();
     private FileOutputStream fos = new FileOutputStream("Hotel.dat");
     private ObjectOutputStream salida = new ObjectOutputStream(fos);
