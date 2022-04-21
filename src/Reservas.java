@@ -32,6 +32,7 @@ public class Reservas extends JFrame {
     private JTextField FechaS;
     private JButton Anular;
     private JTextArea MapaHotel;
+    private JButton BuscarDNIButton;
     private Hotel h = new Hotel();
     private Cliente c = new Cliente();
     private FileOutputStream fos = new FileOutputStream("Hotel.dat");
@@ -166,6 +167,7 @@ public class Reservas extends JFrame {
                 int numEntero6 = Integer.parseInt(TarjetaCredito.getText());
                 int numEntero7 = Integer.parseInt(FechaE.getText());
                 int numEntero8 = Integer.parseInt(FechaS.getText());
+                int numEntero9 = Integer.parseInt(Direccion.getText());
                 c.setNombre(Nombre.getText());
                 c.setApellido(Apellidos.getText());
                 c.setDNI(numEntero4);
@@ -173,6 +175,8 @@ public class Reservas extends JFrame {
                 c.setNumTarjeta(numEntero6);
                 c.setFechaE(numEntero7);
                 c.setFechaS(numEntero8);
+                c.setDireccion(numEntero9);
+                c.setEmail(email.getText());
                 int numEntero1,numEntero2,numEntero3;
                 if(estándarCheckBox.isSelected()){
                      numEntero1 = Integer.parseInt(Estandar.getText());
@@ -204,7 +208,8 @@ public class Reservas extends JFrame {
                 int numEntero6 = Integer.parseInt(TarjetaCredito.getText());
                 int numEntero7 = Integer.parseInt(FechaE.getText());
                 int numEntero8 = Integer.parseInt(FechaS.getText());
-                Cliente c2 = new Cliente(Nombre.getText(),Apellidos.getText(),numEntero4,numEntero5,numEntero6,numEntero7,numEntero8);
+                int numEntero9 = Integer.parseInt(Direccion.getText());
+                Cliente c2 = new Cliente(Nombre.getText(),Apellidos.getText(),numEntero9,numEntero4,numEntero5,email.getText(),numEntero6,numEntero7,numEntero8);
                 int numEntero1,numEntero2,numEntero3;
                 if(estándarCheckBox.isSelected()){
                     numEntero1 = Integer.parseInt(Estandar.getText());
@@ -233,6 +238,33 @@ public class Reservas extends JFrame {
                     PaginaPulsar Confirmar = new PaginaPulsar(s);
                 }
 
+            }
+        });
+
+        BuscarDNIButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int NumDNI = Integer.parseInt(DNI.getText());
+                Cliente c5 = h.mandarDNI(NumDNI);
+                if(c5==null){
+                    String s = "El cliente no tiene reservas en el Hotel";
+                    PaginaPulsar NoReservas = new PaginaPulsar(s);
+                }
+                else{
+                    Nombre.setText(c5.getNombre());
+                    Apellidos.setText(c5.getApellido());
+                    String s = String.valueOf(c5.getTelefono());
+                    Telefono.setText(s);
+                    s = String.valueOf(c5.getNumTarjeta());
+                    TarjetaCredito.setText(s);
+                    s = String.valueOf(c5.getFechaE());
+                    FechaE.setText(s);
+                    s = String.valueOf(c5.getFechaS());
+                    FechaS.setText(s);
+                    s = String.valueOf(c5.getDireccion());
+                    Direccion.setText(s);
+                    email.setText(c.getEmail());
+                }
             }
         });
     }
